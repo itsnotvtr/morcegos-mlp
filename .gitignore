@@ -6,3 +6,7 @@ artigo/perguntas_professor.md
 .venv/
 __pycache__/
 .ipynb_checkpoints/
+
+# Documentos de trabalho (locais)
+PLANO.md
+DIARIO.md

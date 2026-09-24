@@ -1,10 +1,15 @@
-# morcegos-mlp
+# Classificação de espécies de morcegos com MLP
 
-Trabalho final da disciplina PSI0325 (Fundamentos de Adaptação e Aprendizado de
-Máquina, Poli-USP): classificação de espécies de morcegos com rede MLP em
-PyTorch, a partir de descritores acústicos de ecolocalização.
+Trabalho final de PSI0325 (Poli-USP). Classifica 8 espécies de morcegos com uma rede MLP
+em PyTorch, a partir de descritores acústicos de ecolocalização (Fmin, Fmax, Bandwidth, FME, duração).
 
-Autor: Victor Emanuel Ramos de Carvalho (NUSP 15511105).
+## Estrutura
+- `notebooks/`: exploração, preparação, modelos binários (Etapas A e B) e, depois, o multiclasse.
+- `artigo/`: artigo no template SBrT 2026.
+- `banco/` e `dados_processados/`: dados de pesquisa não publicados, fora do repositório.
 
-Veja `PLANO.md` para o plano de execução e `DIARIO.md` para o registro de
-decisões tomadas ao longo do trabalho.
+## Como reproduzir
+Python 3.13 com `torch`, `numpy`, `pandas` (só para ler os CSVs), `matplotlib` e `jupyter`.
+Sem scikit-learn: divisão estratificada, normalização, PCA, LDA e métricas são feitos em NumPy.
+Semente fixa 42; divisão 70/15/15; normalização ajustada só no treino.
+Rode os notebooks em ordem numérica.
