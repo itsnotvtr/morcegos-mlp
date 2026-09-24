@@ -1,5 +1,8 @@
 banco/
 dados_processados/
+Modelo-de-Artigo-para-o-SBrT-2026/
+artigo/explicacoes_do_professor.txt
+artigo/perguntas_professor.md
 .venv/
 __pycache__/
 .ipynb_checkpoints/
