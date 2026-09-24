@@ -10,3 +10,4 @@ __pycache__/
 # Documentos de trabalho (locais)
 PLANO.md
 DIARIO.md
+*.xlsx
