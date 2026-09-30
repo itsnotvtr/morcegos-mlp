@@ -14,6 +14,8 @@ em PyTorch, a partir de descritores acústicos de ecolocalização (Fmin, Fmax, 
 | `06_multiclasse` | Etapa C: multiclasse crescente, de 3 a 8 espécies |
 | `07_hiperparametros` | Etapa D: hiperparâmetros, um fator por vez |
 | `08_local_multiclasse` | Validação cruzada por local com as 8 espécies |
+| `09_teste` | Etapa E: avaliação única no conjunto de teste |
+| **`10_entrega`** | **Notebook de entrega: (i) preparação, (ii) treinamento e (iii) avaliação do modelo final, autocontido** |
 
 `artigo/`: artigo no template SBrT 2026.
 `banco/` e `dados_processados/`: dados de pesquisa não publicados, fora do repositório.
