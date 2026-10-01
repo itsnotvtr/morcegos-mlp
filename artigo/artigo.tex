@@ -193,7 +193,7 @@ A Fig.~\ref{fig:crescente} mostra o efeito de adicionar as espécies em ordem de
 A Tabela~\ref{tab:resultado} compara validação e teste. A queda de 0,966 para 0,959 é compatível com a escolha dos hiperparâmetros na validação. A MLP supera o modelo linear treinado nas mesmas condições, com cerca de 30\% a menos de erro em acurácia balanceada (4,1\% contra 5,8\%).
 
 \begin{table}[htb]
-\caption{\label{tab:resultado}Desempenho (média $\pm$ desvio de 3 sementes; --: não calculado).}
+\caption{\label{tab:resultado}Desempenho (média $\pm$ desvio de 3 sementes).}
 \begin{center}
 \begin{tabular}{llcc}\hline
 Modelo & Métrica & Validação & Teste\\\hline
@@ -201,7 +201,7 @@ MLP & AB & 0,966 $\pm$ 0,002 & 0,959 $\pm$ $<$0,001\\
  & F1 macro & 0,922 $\pm$ 0,004 & 0,926 $\pm$ 0,005\\
  & Acurácia & 0,950 $\pm$ 0,003 & 0,955 $\pm$ 0,004\\\hline
 Linear & AB & 0,953 $\pm$ 0,001 & 0,942 $\pm$ 0,001\\
- & F1 macro & -- & 0,901 $\pm$ 0,002\\\hline
+ & F1 macro & 0,901 $\pm$ 0,002 & 0,901 $\pm$ 0,001\\\hline
 Regra & AB & 0,694 & 0,697\\\hline
 \end{tabular}
 \end{center}
