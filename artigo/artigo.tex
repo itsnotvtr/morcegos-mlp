@@ -207,24 +207,7 @@ Regra & AB & 0,694 & 0,697\\\hline
 \end{center}
 \end{table}
 
-A Tabela~\ref{tab:especie} e a Fig.~\ref{fig:matriz} detalham o teste. Todas as espécies têm sensibilidade acima de 0,92. O ponto fraco é a precisão de \textit{M. nigricans}: em média, 34 gravações de \textit{M. lavali}, do mesmo gênero e com faixas de frequência vizinhas, são classificadas como \textit{M. nigricans}. Esse é o custo do peso por classe. As demais confusões também ocorrem entre espécies próximas: \textit{Molossus molossus} e \textit{M. currentium}, \textit{Neoeptesicus furinalis} e \textit{Lasiurus blossevillii}.
-
-\begin{table}[htb]
-\caption{\label{tab:especie}Sensibilidade e precisão da MLP no teste.}
-\begin{center}
-\begin{tabular}{lcc}\hline
-Espécie & Sensibilidade & Precisão\\\hline
-\textit{Myotis lavali} & 0,956 & 0,996\\
-\textit{Molossus molossus} & 0,928 & 0,979\\
-\textit{Lasiurus blossevillii} & 0,957 & 0,921\\
-\textit{Neoeptesicus furinalis} & 0,936 & 0,936\\
-\textit{Eumops} sp. & 0,985 & 0,964\\
-\textit{Molossus currentium} & 0,963 & 0,897\\
-\textit{Molossops temminckii} & 0,996 & 0,914\\
-\textit{Myotis nigricans} & 0,953 & 0,613\\\hline
-\end{tabular}
-\end{center}
-\end{table}
+A Fig.~\ref{fig:matriz} detalha o teste. Todas as espécies têm sensibilidade acima de 0,92 (de 0,928 em \textit{M. molossus} a 0,996 em \textit{M. temminckii}), e a precisão fica acima de 0,89 em todas, exceto \textit{M. nigricans} (0,613): em média, 34 gravações de \textit{M. lavali}, do mesmo gênero e com faixas de frequência vizinhas, são classificadas como \textit{M. nigricans}. Esse é o custo do peso por classe. As demais confusões também ocorrem entre espécies próximas: \textit{Molossus molossus} e \textit{M. currentium}, \textit{Neoeptesicus furinalis} e \textit{Lasiurus blossevillii}.
 
 \begin{figure}[htb]
 \begin{center}
