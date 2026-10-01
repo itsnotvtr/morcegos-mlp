@@ -52,6 +52,52 @@ plt.close(fig)
 if "--so-curva" in sys.argv:
     sys.exit()
 
+# 3) curvas de perda 8 × 64 neurônios (mesmo código e semente do notebook 07: semente só antes da rede)
+d = np.load("dados_processados/etapa2.npz", allow_pickle=True)
+_ordem = pd.Series(d["y_simples"]).value_counts().index.tolist()
+_X = d["X_simples"].astype(np.float32)
+_y = np.array([_ordem.index(e) for e in d["y_simples"]])
+_tr, _va = d["pos_treino_simples"], d["pos_val_simples"]
+_pesos = torch.tensor(len(_tr) / (len(_ordem) * np.bincount(_y[_tr], minlength=len(_ordem))), dtype=torch.float32)
+fig, axes = plt.subplots(1, 2, figsize=(LARGURA, 1.9), sharey=True)
+for ax, n_oc in zip(axes, [8, 64]):
+    torch.manual_seed(0)
+    rede = nn.Sequential(nn.Linear(5, n_oc), nn.Tanh(), nn.Linear(n_oc, len(_ordem)))
+    otim = torch.optim.Adam(rede.parameters(), lr=0.01)
+    crit = nn.CrossEntropyLoss(weight=_pesos)
+    loader = DataLoader(TensorDataset(torch.from_numpy(_X[_tr]), torch.from_numpy(_y[_tr])), batch_size=64, shuffle=True)
+    ptr, pva = [], []
+    for _ in range(1000):
+        rede.train()
+        acc = 0.0
+        for xb, yb in loader:
+            otim.zero_grad()
+            perda = crit(rede(xb), yb)
+            perda.backward()
+            otim.step()
+            acc += perda.item() * len(xb)
+        ptr.append(acc / len(_tr))
+        rede.eval()
+        with torch.no_grad():
+            pva.append(crit(rede(torch.from_numpy(_X[_va])), torch.from_numpy(_y[_va])).item())
+    ep = int(np.argmin(pva)) + 1
+    print(f"{n_oc} neurônios: val. mínima {min(pva):.3f} (época {ep}), final {pva[-1]:.3f}, treino final {ptr[-1]:.3f}")
+    ax.plot(ptr, color="#2a78d6", linewidth=0.9, label="treino")
+    ax.plot(pva, color="#eb6834", linewidth=0.6, label="validação")
+    ax.axvline(ep - 1, color="#898781", linestyle="--", linewidth=0.8)
+    ax.set_title(f"{n_oc} neurônios", fontsize=8)
+    ax.set_xlabel("época")
+    ax.set_ylim(0.05, 0.35)
+    ax.yaxis.set_major_formatter(VIRGULA(2))
+    ax.spines[["top", "right"]].set_visible(False)
+axes[0].set_ylabel("perda")
+axes[0].legend(frameon=False, loc="upper right")
+fig.tight_layout()
+fig.savefig(SAIDA + "curvas_8_64.pdf")
+plt.close(fig)
+if "--so-curvas" in sys.argv:
+    sys.exit()
+
 # 2) matriz de confusão no teste (retreino idêntico ao notebook 10)
 d = np.load("dados_processados/etapa2.npz", allow_pickle=True)
 ordem = pd.Series(d["y_simples"]).value_counts().index.tolist()

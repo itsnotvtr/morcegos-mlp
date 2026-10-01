@@ -140,7 +140,14 @@ Glorot com SGD e momento & 0,967\\\hline
 \end{center}
 \end{table}
 
-O platô indica que o limite está nos dados, e não na capacidade da rede. Com 64 neurônios, a perda de treino continua caindo enquanto a de validação sobe de 0,142 (época 98) para 0,195 (época 1000), um sinal de sobreajuste que a escolha dos pesos pelo mínimo da validação neutraliza. Com 8 neurônios, as duas curvas permanecem juntas.
+O platô indica que o limite está nos dados, e não na capacidade da rede. Com 64 neurônios, a perda de treino continua caindo enquanto a de validação sobe de 0,142 (época 98) para 0,195 (época 1000), um sinal de sobreajuste que a escolha dos pesos pelo mínimo da validação neutraliza. Com 8 neurônios, as duas curvas permanecem juntas (Fig.~\ref{fig:curvas}).
+
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=\columnwidth]{figuras/curvas_8_64.pdf}
+\end{center}
+\caption{\label{fig:curvas}Perda (entropia cruzada com peso) de treino e de validação com 8 e 64 neurônios na camada oculta (semente 0). A linha tracejada marca a época de menor perda de validação, cujos pesos são guardados.}
+\end{figure}
 
 \section{Avaliação}
 
@@ -157,6 +164,20 @@ Duas referências são avaliadas no mesmo conjunto: um modelo linear (regressão
 \subsection{Progressão até 8 espécies}
 
 Nos problemas iniciais, a MLP superou o modelo linear: em \textit{M. lavali} contra as demais, o coeficiente de Matthews na validação passou de 0,884 para 0,968 e os falsos positivos de 102 para 17, a maioria de \textit{M. nigricans}. No par \textit{M. lavali} e \textit{M. temminckii}, as duas espécies têm FME de cerca de 50~kHz; uma MLP que recebe só a FME prevê sempre \textit{M. lavali} (coeficiente 0,000), enquanto com as cinco medidas chega a 0,963. A rede usa informação que a regra baseada na FME não usa.
+
+O mesmo par, com razão de 13 para 1, serviu para comparar formas de tratar o desbalanceamento (Tabela~\ref{tab:desbal}; 84 \textit{M. temminckii} entre 1.177 gravações de validação, \textit{M. temminckii} como classe positiva). A subamostragem da classe majoritária, que descarta gravações de \textit{M. lavali} até igualar as classes no treino, reduziu a precisão e o coeficiente de Matthews; por isso, e por orientação do professor, não foi usada. O peso inverso à frequência eliminou os falsos negativos, mas aumentou os falsos positivos, uma troca que reaparece no problema com 8 espécies.
+
+\begin{table}[htb]
+\caption{\label{tab:desbal}Desbalanceamento no par \textit{M. lavali} e \textit{M. temminckii} (MLP, validação).}
+\begin{center}
+\begin{tabular}{lccc}\hline
+Estratégia & Sensib. & Precisão & MCC\\\hline
+Sem correção & 0,988 & 0,943 & 0,963\\
+Subamostragem 1:1 (5 sorteios) & 0,986 & 0,889 & 0,931\\
+Peso inverso (3 sementes) & 1,000 & 0,891 & 0,939\\\hline
+\end{tabular}
+\end{center}
+\end{table}
 
 A Fig.~\ref{fig:crescente} mostra o efeito de adicionar as espécies em ordem de frequência. Antes de rodar, definiu-se que haveria degradação se a espécie nova tivesse sensibilidade abaixo de 0,70 ou se a acurácia balanceada caísse mais de 5 pontos; isso não ocorreu. Com 8 espécies, o peso por classe elevou a acurácia balanceada de 0,947 para 0,969 e a sensibilidade de \textit{M. nigricans} de 0,836 para 0,988, ao custo de mais falsos positivos (F1 macro de 0,948 para 0,927). Como perder uma espécie rara foi considerado pior, adotou-se o peso. A representação com os três pulsos de cada gravação (25 atributos) não superou a de médias (0,949 e 0,947, sem peso) e foi descartada.
 
