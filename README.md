@@ -1,27 +1,50 @@
-# Classificação de espécies de morcegos com MLP
+# Identificação de espécies de morcegos com uma rede MLP
 
-Trabalho final de PSI0325 (Poli-USP). Classifica 8 espécies de morcegos com uma rede MLP
-em PyTorch, a partir de descritores acústicos de ecolocalização (Fmin, Fmax, Bandwidth, FME, duração).
+Trabalho final de PSI0325 – Fundamentos de Adaptação e Aprendizado de Máquina (Poli-USP, 2026).
+Uma rede MLP em PyTorch identifica 8 espécies de morcegos a partir de medidas do pulso de
+ecolocalização (frequência mínima, frequência máxima, largura de banda, frequência de máxima
+energia e duração).
 
-## Notebooks (rodar em ordem)
+Resultado no conjunto de teste: acurácia balanceada de 0,959, contra 0,942 de um modelo linear
+treinado nas mesmas condições e 0,697 de uma regra baseada na chave de identificação dos
+especialistas.
+
+## Dados
+
+Os dados pertencem ao **Centro de Bioacústica do Norte de Minas Gerais** (projetos Cidade Viva,
+em Montes Claros, e Parque Estadual da Lapa Grande, MG) e **não são públicos**. Por isso eles
+não estão neste repositório, e os notebooks não podem ser executados a partir dele. Todos os
+notebooks estão aqui **já executados**, com as saídas.
+
+## Notebooks
+
 | Notebook | Conteúdo |
 |---|---|
 | `01_exploracao` | Leitura e junção das tabelas, problemas da base, histogramas, PCA e LDA |
-| `02_preparacao` | Representações simples (5 atributos) e completa (25), divisão 70/15/15 estratificada, normalização |
-| `03_binario_lavali` | Etapa A: *Myotis lavali* × demais (regressão logística e MLP) |
-| `04_par_dificil` | Etapa B: *M. lavali* × *Molossops temminckii* (desbalanceamento, atalho de local) |
-| `05_checagens` | Rótulos embaralhados, régua da chave de identificação, validação cruzada por local (binário) |
-| `06_multiclasse` | Etapa C: multiclasse crescente, de 3 a 8 espécies |
-| `07_hiperparametros` | Etapa D: hiperparâmetros, um fator por vez |
+| `02_preparacao` | Limpeza, divisão estratificada 70/15/15 e normalização |
+| `03_binario_lavali` | *Myotis lavali* × demais espécies: regressão logística e MLP |
+| `04_par_dificil` | *M. lavali* × *Molossops temminckii*: classes desbalanceadas |
+| `05_checagens` | Rótulos embaralhados, regra da chave de identificação, validação cruzada por local |
+| `06_multiclasse` | De 3 a 8 espécies, uma por vez |
+| `07_hiperparametros` | Hiperparâmetros, um fator por vez (22 configurações) |
 | `08_local_multiclasse` | Validação cruzada por local com as 8 espécies |
-| `09_teste` | Etapa E: avaliação única no conjunto de teste |
-| **`10_entrega`** | **Notebook de entrega: (i) preparação, (ii) treinamento e (iii) avaliação do modelo final, autocontido** |
+| `09_teste` | Avaliação no conjunto de teste |
+| **`10_entrega`** | **Notebook de entrega: (i) preparação, (ii) treinamento e (iii) avaliação do modelo final** |
+| `11_comparacao_linear` | Modelo linear treinado nas mesmas condições da MLP |
+| `12_analise_entradas` | Menos medidas, PCA e LDA como entrada; variante de 3 medidas |
 
-`artigo/`: artigo no template SBrT 2026.
-`banco/` e `dados_processados/`: dados de pesquisa não publicados, fora do repositório.
+Os notebooks `01` a `09` e `11` registram o caminho até o modelo final. O `10` é a versão
+entregue na disciplina: ele lê um arquivo `dados/gravacoes.csv` (uma linha por gravação, com a
+espécie e as quatro medidas), que não acompanha o repositório. O `12` foi feito depois da
+apresentação, a partir das sugestões dos professores.
 
-## Como reproduzir
-Versões em `requirements.txt` (Python 3.13.13, CPU).
-Sem scikit-learn: divisão estratificada, normalização, PCA, LDA e métricas são feitos em NumPy.
-Semente da divisão 42; divisão 70/15/15; normalização ajustada só no treino; o conjunto de
-teste só é usado na avaliação final.
+`artigo/`: o artigo, no template SBrT 2026.
+
+## Como foi feito
+
+- Versões das bibliotecas em `requirements.txt` (Python 3.13, PyTorch em CPU).
+- Sem scikit-learn: divisão estratificada, normalização, PCA, LDA e métricas são implementadas
+  em NumPy, a partir das fórmulas da disciplina.
+- Divisão com semente 42; treinos com sementes 0, 1 e 2; normalização ajustada só no treino.
+- Hiperparâmetros escolhidos pela validação; o conjunto de teste é usado para avaliar o modelo
+  final e, uma vez, a variante de 3 medidas escolhida pela validação (notebook `12`).
