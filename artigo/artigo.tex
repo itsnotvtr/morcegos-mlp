@@ -4,6 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage[hidelinks,implicit=false]{hyperref}
 
 \begin{document}
 
@@ -18,14 +19,14 @@
 \markboth{PSI0325 -- TRABALHO FINAL -- ESCOLA POLITÉCNICA DA USP -- OUTUBRO DE 2026}{}
 
 \begin{resumo}
-Este trabalho treina uma rede MLP para identificar 8 espécies de morcegos a partir de cinco medidas do pulso de ecolocalização, em 13.408 gravações identificadas por especialistas. A rede tem uma camada oculta de 8 neurônios e é treinada com entropia cruzada ponderada pela frequência das classes. No conjunto de teste, a acurácia balanceada é 0,959, contra 0,942 de um modelo linear e 0,697 de uma regra baseada na chave de identificação. Os erros se concentram em espécies do mesmo gênero. Checagens com rótulos embaralhados e com locais fora do treino indicam que o resultado não decorre de vazamento.
+Este trabalho treina uma rede MLP para identificar 8 espécies de morcegos a partir de cinco medidas do pulso de ecolocalização, em 13.408 gravações identificadas por especialistas. A rede tem uma camada oculta de 8 neurônios e é treinada com entropia cruzada ponderada pela frequência das classes. No conjunto de teste, a acurácia balanceada é 0,959, contra 0,942 de um modelo linear e 0,697 de uma regra baseada na chave de identificação. Três das cinco medidas bastam para o mesmo resultado; LDA e PCA não trazem ganho. Checagens com rótulos embaralhados e locais fora do treino descartam vazamento.
 \end{resumo}
 \begin{chave}
 Rede neural MLP, bioacústica, classificação multiclasse, morcegos.
 \end{chave}
 
 \begin{abstract}
-This work trains an MLP network to identify 8 bat species from five measurements of the echolocation pulse, using 13,408 recordings labeled by experts. The network has one hidden layer with 8 neurons and is trained with cross-entropy weighted by class frequency. On the test set, its balanced accuracy is 0.959, against 0.942 for a linear model and 0.697 for a rule based on the identification key. Errors concentrate on species of the same genus. Checks with shuffled labels and with held-out recording sites indicate that the result is not due to leakage.
+This work trains an MLP network to identify 8 bat species from five measurements of the echolocation pulse, using 13,408 recordings labeled by experts. The network has one hidden layer with 8 neurons and is trained with cross-entropy weighted by class frequency. On the test set, its balanced accuracy is 0.959, against 0.942 for a linear model and 0.697 for a rule based on the identification key. Three of the five measurements suffice for the same result; LDA and PCA projections bring no gain. Checks with shuffled labels and held-out recording sites rule out leakage.
 \end{abstract}
 \begin{keywords}
 MLP neural network, bioacoustics, multiclass classification, bats.
@@ -37,7 +38,7 @@ No monitoramento acústico de morcegos, detectores gravam os pulsos de ecolocali
 
 A chave de identificação usada pelos especialistas atribui faixas de frequência sobrepostas a espécies diferentes e as separa por critérios adicionais, como a duração do pulso. Um critério que vale numa faixa não vale em outra, o que sugere fronteiras de decisão não lineares e motiva o uso de uma rede MLP, com a regressão logística como referência linear.
 
-O trabalho seguiu uma progressão: primeiro um problema binário (\textit{Myotis lavali} contra as demais espécies), depois um par difícil e desbalanceado (\textit{M. lavali} contra \textit{Molossops temminckii}) e, por fim, o problema com 8 espécies, adicionando uma de cada vez. Todo o código foi escrito em PyTorch~\cite{pytorch}; divisão dos dados, normalização e métricas foram implementadas em NumPy a partir das fórmulas da disciplina~\cite{psi0325}.
+O trabalho seguiu uma progressão: primeiro um problema binário (\textit{Myotis lavali} contra as demais espécies), depois um par difícil e desbalanceado (\textit{M. lavali} contra \textit{Molossops temminckii}) e, por fim, o problema com 8 espécies, adicionando uma de cada vez. Todo o código foi escrito em PyTorch~\cite{pytorch}; divisão dos dados, normalização e métricas foram implementadas em NumPy a partir das fórmulas da disciplina~\cite{psi0325}. Os notebooks de todas as etapas estão em \href{https://github.com/itsnotvtr/morcegos-mlp}{\texttt{github.com/itsnotvtr/morcegos-mlp}}.
 
 \section{Base de dados}
 
@@ -73,7 +74,7 @@ Colunas da planilha foram excluídas por três motivos. \textit{Tipo de pulso}, 
 
 \subsection{Divisão e normalização}
 
-A divisão é estratificada por espécie, 70\% para treino, 15\% para validação e 15\% para teste, com semente 42. O treino ajusta os pesos, a validação escolhe a época e os hiperparâmetros, e o teste foi usado uma única vez, ao final. Cada atributo $x_j$ é normalizado para média zero e variância unitária,
+A divisão é estratificada por espécie, 70\% para treino, 15\% para validação e 15\% para teste, com semente 42. O treino ajusta os pesos, a validação escolhe a época e os hiperparâmetros, e o teste foi usado uma única vez para avaliar o modelo final (a Seção~\ref{sec:entradas} descreve a avaliação posterior de uma variante, que não influenciou nenhuma escolha). Cada atributo $x_j$ é normalizado para média zero e variância unitária,
 \begin{equation}
 \tilde{x}_j=\frac{x_j-\mu_j}{\sigma_j},
 \end{equation}
@@ -218,21 +219,42 @@ A Fig.~\ref{fig:matriz} detalha o teste. Todas as espécies têm sensibilidade a
 
 \subsection{Checagens}
 
-Como o desempenho é alto, explicações alternativas foram testadas sem usar o teste. Com os rótulos do treino embaralhados, o coeficiente de Matthews cai para valores entre $-0{,}020$ e 0,096: não há vazamento de informação na preparação. A regra baseada na FME da chave obtém acurácia balanceada de 0,694 com 8 espécies, bem abaixo da MLP: a rede não apenas reproduz a regra. Por fim, numa validação cruzada em que cada local de coleta fica fora do treino uma vez, a acurácia balanceada passa de 0,966 para 0,955. Gravações feitas segundos depois no mesmo local costumam ser o mesmo animal: 54\% das gravações de teste têm uma assim no treino, mas a acurácia é 0,965 com e 0,955 sem essa vizinha, e numa divisão em que noites inteiras (local e data) ficam fora do treino a acurácia balanceada é 0,959. Por fim, espécie e projeto de origem estão associados (\textit{M. currentium} e \textit{M. nigricans} vêm quase só dos parques urbanos) e não podem ser separados; em \textit{M. molossus}, a FME média é de 34,5~kHz num projeto e 40,1~kHz no outro, o que sugere critérios de identificação diferentes.
+Como o desempenho é alto, explicações alternativas foram testadas sem usar o teste. Com os rótulos do treino embaralhados, o coeficiente de Matthews cai para valores entre $-0{,}020$ e 0,096: não há vazamento de informação na preparação. A regra baseada na FME da chave obtém acurácia balanceada de 0,694 com 8 espécies, bem abaixo da MLP: a rede não apenas reproduz a regra. Numa validação cruzada em que cada local de coleta fica fora do treino uma vez, a acurácia balanceada passa de 0,966 para 0,955. Gravações feitas segundos depois no mesmo local costumam ser o mesmo animal: 54\% das gravações de teste têm uma assim no treino, mas a acurácia é 0,965 com e 0,955 sem essa vizinha, e numa divisão em que noites inteiras (local e data) ficam fora do treino a acurácia balanceada é 0,959. Por fim, espécie e projeto de origem estão associados (\textit{M. currentium} e \textit{M. nigricans} vêm quase só dos parques urbanos) e não podem ser separados; em \textit{M. molossus}, a FME média é de 34,5~kHz num projeto e 40,1~kHz no outro, o que sugere critérios de identificação diferentes.
 
 \subsection{Validação externa}
 
-Depois de o modelo estar congelado, a planilha original recebeu novas gravações. Numa cópia de 1º de outubro de 2026, 908 gravações das 8 espécies não constavam da base usada; 796 delas são de noites (local e data) que não aparecem no treino. Sem nenhum ajuste, a MLP obteve acurácia de 0,958 nas 908 e de 0,962 nas 796, com acurácia balanceada de 0,930 e 0,953, contra 0,662 e 0,672 da regra da chave. As espécies mais representadas mantiveram sensibilidade alta (\textit{M. lavali}: 654 de 674; \textit{M. temminckii}: 122 de 128; \textit{N. furinalis}: 44 de 48; \textit{M. currentium}: 31 de 32); \textit{M. molossus} foi a exceção (12 de 19), com sete gravações classificadas como \textit{M. currentium}.
+Depois de o modelo estar congelado, a planilha original recebeu novas gravações. Em cópias de 1º e de 11 de outubro de 2026, 1.058 gravações das 8 espécies não constavam da base usada; 946 delas são de quatro noites (local e data) que não aparecem no treino. Sem nenhum ajuste, a MLP obteve acurácia balanceada de 0,937 $\pm$ 0,014 nas 1.058 e de 0,957 $\pm$ 0,012 nas 946 (média e desvio das 3 sementes; acurácia de 0,944 e 0,945), contra 0,718 e 0,731 da regra da chave. O desvio é maior que no teste porque quatro espécies têm de 4 a 19 gravações nesse conjunto. As espécies mais representadas mantiveram sensibilidade alta (\textit{M. lavali}: 0,943 em 795 gravações; \textit{M. temminckii}: 0,971 em 128; \textit{N. furinalis}: 0,925 em 62; \textit{M. currentium}: 0,971 em 34); \textit{M. molossus} foi a exceção (0,772 em 19). Nas 150 gravações mais recentes, de duas noites, 14\% das de \textit{M. lavali} foram classificadas como \textit{M. nigricans}, contra 3\% no teste: o ponto fraco do modelo pode se acentuar em noites novas.
+
+\subsection{Redução das entradas}\label{sec:entradas}
+
+Após a apresentação do trabalho, por sugestão dos professores, avaliou-se o efeito de reduzir a entrada da rede de duas formas: escolhendo um subconjunto das medidas ou projetando-as com LDA ou PCA~\cite{psi0325}. A rede e o treino são os da Tabela~\ref{tab:config}; muda apenas a entrada. Foram treinadas as 31 combinações das cinco medidas e as $M$ primeiras direções da LDA e do PCA ($M=1$ a 4), ajustados só no treino com as quatro medidas independentes (com a largura de banda, a matriz de dispersão intraclasse é singular). A Tabela~\ref{tab:entradas} resume a comparação, feita na validação.
+
+\begin{table}[htb]
+\caption{\label{tab:entradas}Acurácia balanceada na validação por número de entradas (média de 3 sementes; cinco medidas: 0,966).}
+\begin{center}
+\begin{tabular}{clcc}\hline
+Entradas & Melhor combinação de medidas & LDA & PCA\\\hline
+1 & 0,816 (Fmin) & 0,831 & 0,703\\
+2 & 0,956 (Fmax, FME) & 0,924 & 0,787\\
+3 & 0,969 (Fmin, Fmax, FME) & 0,963 & 0,945\\
+4 & 0,967 (Fmin, Fmax, banda, FME) & 0,964 & 0,965\\\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Retirar a FME reduz a acurácia balanceada em 0,035; retirar qualquer outra medida a altera em no máximo 0,001. Com Fmin, Fmax e FME, a rede empata com a de cinco medidas (critério de $\pm$0,005): a largura de banda é combinação linear de duas entradas, e a duração, embora seja um dos critérios da chave, não acrescenta informação quando as três frequências estão presentes. A FME, base da chave dos especialistas, é a única medida insubstituível, mas sozinha chega a apenas 0,799. Com todas as direções, LDA e PCA empatam com as medidas originais, pois são transformações lineares que a primeira camada da rede já pode realizar; com menos direções, a LDA supera o PCA, que ignora os rótulos, e ambos ficam abaixo da simples escolha de medidas.
+
+A variante de três medidas, escolhida pela validação, foi então avaliada uma única vez no teste: acurácia balanceada de 0,959 $\pm$ 0,001 e F1 macro de 0,929, iguais aos da rede de cinco medidas dentro da variação entre sementes (nas 1.058 gravações externas, 0,950 $\pm$ 0,004). O modelo final não foi alterado. A variante tem 104 parâmetros, contra 120, e dispensa a medição da duração do pulso, o que interessa a uma implementação embarcada; a extração das medidas a partir do áudio, etapa mais custosa nesse cenário, não foi tratada aqui.
 
 \section{Conclusões}
 
-Uma MLP com uma camada oculta de 8 neurônios identifica 8 espécies de morcegos a partir de cinco medidas do pulso com acurácia balanceada de 0,959 no teste, acima do modelo linear (0,942) e da regra de frequência da chave de identificação (0,697). O desempenho se manteve em gravações coletadas depois, em noites não usadas no treino (acurácia balanceada de 0,953). Redes maiores e outras escolhas de hiperparâmetros não melhoraram o resultado, que é limitado pela sobreposição entre espécies do mesmo gênero.
+Uma MLP com uma camada oculta de 8 neurônios identifica 8 espécies de morcegos a partir de cinco medidas do pulso com acurácia balanceada de 0,959 no teste, acima do modelo linear (0,942) e da regra de frequência da chave de identificação (0,697). O desempenho se manteve em gravações coletadas depois, em noites não usadas no treino (acurácia balanceada de 0,957). Três medidas (Fmin, Fmax e FME) bastam para o mesmo resultado, e projeções por LDA ou PCA não trazem ganho. Redes maiores e outras escolhas de hiperparâmetros não melhoraram o resultado, que é limitado pela sobreposição entre espécies do mesmo gênero.
 
 O resultado tem limites. O rótulo é a identificação acústica feita por especialistas, sem captura dos animais, então as métricas medem concordância com eles. As medidas foram extraídas manualmente do sonograma. O modelo conhece apenas 8 espécies, de uma região e de um tipo de gravador, e cerca de 1,2\% dos nomes de arquivo indicam espécie diferente do rótulo, o que sugere algum ruído de rotulagem. Há ainda 190 gravações com duas espécies, cujas linhas podem ter caído em conjuntos diferentes (2,3\% da validação e 1,7\% do teste). Espécie e projeto de origem estão associados, e os rótulos de \textit{M. molossus} parecem seguir critérios diferentes entre os projetos. As 15 espécies menos frequentes ficaram de fora: uma gravação de outra espécie será atribuída a uma das 8. Na prática, o modelo serve como triagem: raramente deixa de indicar uma espécie rara, mas as indicações de \textit{M. nigricans} precisam de conferência. Continuações naturais são extrair as medidas diretamente do áudio, incluir as espécies raras e permitir que o modelo recuse gravações de espécies que não conhece.
 
 \begin{thebibliography}{99}
 \bibitem{base} Centro de Bioacústica do Norte de Minas Gerais, dados de monitoramento acústico dos projetos Cidade Viva (Montes Claros-MG) e Parque Estadual da Lapa Grande, 2024--2026. Dados não publicados.
-\bibitem{psi0325} PSI0325 -- Fundamentos de Adaptação e Aprendizado de Máquina, material de aula, Escola Politécnica da USP, 2026. Disponível em: https://psi0325.github.io.
+\bibitem{psi0325} PSI0325 -- Fundamentos de Adaptação e Aprendizado de Máquina, material de aula, Escola Politécnica da USP, 2026. Disponível em: \url{https://psi0325.github.io}.
 \bibitem{pytorch} A. Paszke \textit{et al.}, ``PyTorch: An imperative style, high-performance deep learning library,'' em \textit{Advances in Neural Information Processing Systems 32}, 2019.
 \bibitem{adam} D. P. Kingma e J. Ba, ``Adam: A method for stochastic optimization,'' em \textit{International Conference on Learning Representations}, 2015.
 \bibitem{glorot} X. Glorot e Y. Bengio, ``Understanding the difficulty of training deep feedforward neural networks,'' em \textit{Proc. AISTATS}, pp. 249--256, 2010.
