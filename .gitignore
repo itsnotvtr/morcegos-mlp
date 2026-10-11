@@ -11,9 +11,14 @@ __pycache__/
 PLANO.md
 DIARIO.md
 *.xlsx
+*.zip
 relatorio/
 apresentacao/
 artigo/*.pdf
 CHECKLIST.md
 ferramenta/
 estudo/
+
+# Pacote de entrega (contém dados não publicados)
+entrega/
+notebooks/dados/
