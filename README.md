@@ -32,11 +32,14 @@ notebooks estão aqui **já executados**, com as saídas.
 | **`10_entrega`** | **Notebook de entrega: (i) preparação, (ii) treinamento e (iii) avaliação do modelo final** |
 | `11_comparacao_linear` | Modelo linear treinado nas mesmas condições da MLP |
 | `12_analise_entradas` | Menos medidas, PCA e LDA como entrada; variante de 3 medidas |
+| `13_validacao_externa` | Checagens da base (projeto, gravações vizinhas, divisão por noite) e validação externa |
 
 Os notebooks `01` a `09` e `11` registram o caminho até o modelo final. O `10` é a versão
 entregue na disciplina: ele lê um arquivo `dados/gravacoes.csv` (uma linha por gravação, com a
 espécie e as quatro medidas), que não acompanha o repositório. O `12` foi feito depois da
-apresentação, a partir das sugestões dos professores.
+apresentação, a partir das sugestões dos professores. O `13` reúne as checagens e a validação
+externa do artigo, que usam local, data e hora das gravações (só contagens e métricas aparecem
+nas saídas).
 
 `artigo/`: o artigo, no template SBrT 2026.
 

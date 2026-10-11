@@ -22,3 +22,6 @@ estudo/
 # Pacote de entrega (contém dados não publicados)
 entrega/
 notebooks/dados/
+
+# Scripts auxiliares que leem a planilha original (local, data, nome de arquivo)
+scripts_auditoria/
